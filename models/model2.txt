@@ -1,0 +1,138 @@
+model {
+
+##### Likelihood of data ----------------------------------------------------------------------
+
+    for (t in 1:N.sex) {
+    for (i in 1:N.country){
+
+      mu.lfs[t,i]~dlnorm(m.lfs[t,i],tau.lfs)
+      mu.fb[t,i]~dlnorm(m.fb[t,i],tau.fb)
+
+      lfs[t,i]~dpois(mu.lfs[t,i])
+      fb[t,i]~dpois(mu.fb[t,i])
+    }}
+
+
+##### Measurement error model ------------------------------------------------------------------
+
+    for (t in 1:N.sex) {
+    for(i in 1:19) {
+      m.lfs[t,i] <- bias.lfs[t,i]+log(true.stock[t,i])
+      m.fb[t,i] <- def.fb + bias.fb + alg.fb[t,i] +cov.fb[t,i]+log(true.stock[t,i])
+    }}
+
+    for (t in 1:N.sex) {
+    for(i in 20:20) {
+      m.lfs[t,i] <- bias.lfs[t,i]+log(true.stock[t,i])
+      m.fb[t,i] <- def.fb + bias.fb +  greece_f[t,i] +cov.fb[t,i]+log(true.stock[t,i])
+    }}
+
+        for (t in 1:N.sex) {
+    for(i in 21:39) {
+      m.lfs[t,i] <- bias.lfs[t,i]+log(true.stock[t,i])
+      m.fb[t,i] <- def.fb + bias.fb  +cov.fb[t,i]+log(true.stock[t,i])
+    }}
+
+    for (t in 1:N.sex) {
+    for(i in 40:40) {
+      m.lfs[t,i] <- bias.lfs[t,i]+log(true.stock[t,i])
+      m.fb[t,i] <- def.fb + bias.fb + greece_f[t,i] +cov.fb[t,i]+log(true.stock[t,i])
+    }}
+    
+
+# LFS BIAS divided into small and big countries
+    for (t in 1:N.sex) {
+    for (i in 1:5) {
+    bias.lfs[t,i]~dnorm(-0.04,100)}}
+    for (t in 1:N.sex) {
+    for (i in 6:9) {
+    bias.lfs[t,i]~dnorm(-0.13,100)}}
+    for (t in 1:N.sex) {
+    for (i in 10:19) {
+    bias.lfs[t,i]~dnorm(-0.35,100)}}
+    for (t in 1:N.sex) {
+    for (i in 20:20) {
+    bias.lfs[t,i]~dnorm(-0.13,100)}}
+
+    for (t in 1:N.sex) {
+    for (i in 21:25) {
+    bias.lfs[t,i]~dnorm(-0.04,100)}}
+    for (t in 1:N.sex) {
+    for (i in 26:29) {
+    bias.lfs[t,i]~dnorm(-0.13,100)}}
+    for (t in 1:N.sex) {
+    for (i in 30:39) {
+    bias.lfs[t,i]~dnorm(-0.35,100)}}
+    for (t in 1:N.sex) {
+    for (i in 40:40) {
+    bias.lfs[t,i]~dnorm(-0.13,100)}}
+
+# FB values
+  def.fb~dnorm(0,100) # to relax small variance
+  bias.fb~dnorm(0.04,100)
+
+  for (t in 1:N.sex) {
+  for (i in 1:20) {
+
+  alg.fb[t,i]~dnorm((alg[t,i]),100)
+  }}
+
+
+  for (t in 1:N.sex) {
+  for (i in 1:N.country) {
+
+  cov.fb[t,i]~dnorm(-((rate[t,i])),100)
+  }}
+
+  # unemployment
+  for (t in 1:N.sex){
+  for (i in 1:N.country) {
+  unemp_17[t,i]~dlnorm(0,100)
+  }}
+
+  # greece
+  for (t in 1:N.sex) {
+  for (i in 20:20) {
+  greece_f[t,i]~dnorm(-2.76,10)}
+  }
+
+  for (t in 1:N.sex) {
+  for (i in 40:40) {
+  greece_f[t,i]~dnorm(-2.76,10)}
+  }
+
+
+##### Migration model----------------------------------------------------------------------
+
+    for (t in 1:N.sex) {
+    for (i in 1:N.country) {
+      migmean[t,i]<-a0+
+        a1*pop[t,i]+
+        a2*inflow[t,i]+
+        a3*outflow[t,i]+
+        a4*gdp[t,i]+
+        a5*unemp[t,i]
+      true.stock[t,i]~dlnorm(migmean[t,i],tau.mig)
+    }}
+
+##### Prior distributions -----------------------------------------------------------
+
+# Precision terms Changed to dgamma(100,1)
+# Gamma (100, 1) has mean 100, and variance 100
+  tau.lfs~dgamma(100,1)
+  tau.fb~dgamma(100,1)
+  tau.mig~dgamma(100,1)
+
+
+# Regression model priors
+  a0~dnorm(0,0.01)
+  a1~dnorm(0,1)
+  a2~dnorm(0,1)
+  a3~dnorm(0,1)
+  a4~dnorm(0,1)
+  a5~dnorm(0,1)
+
+##### Sum of the stock by Sex --------------------------------------------------------
+  for (i in 1:N.country){
+  sum.stock[i]<-(true.stock[1,i]+true.stock[2,i])}
+}

@@ -1,0 +1,133 @@
+model {
+##### Likelihood of data ----------------------------------------------------------------------
+
+for (i in 1:40){
+
+#data
+      lfs[i]~dpois(mu.lfs[i])
+      fb[i]~dpois(mu.fb[i])
+
+      mu.lfs[i]~dlnorm(m.lfs[i],tau.lfs)
+      mu.fb[i]~dlnorm(m.fb[i],tau.fb)
+
+}
+
+##### Measurement error model ------------------------------------------------------------------
+
+for(i in 1:19) {
+      m.lfs[i] <- bias.lfs[i]+log(true.stock[i])
+      m.fb[i] <- def.fb + bias.fb + alg.fb[i] +cov.fb[i] +log(true.stock[i])
+}
+
+for(i in 20:20) {
+      m.lfs[i] <- bias.lfs[i]+log(true.stock[i])
+      m.fb[i] <- def.fb + bias.fb + greece_f[i] + alg.fb[i] +cov.fb[i] +log(true.stock[i])
+}
+
+
+for(i in 21:39) {
+      m.lfs[i] <- bias.lfs[i]+log(true.stock[i])
+      m.fb[i] <- def.fb + bias.fb +cov.fb[i] +log(true.stock[i])
+}
+
+for(i in 40:40) {
+      m.lfs[i] <- bias.lfs[i]+log(true.stock[i])
+      m.fb[i] <- def.fb + bias.fb + greece_f[i] +cov.fb[i] +log(true.stock[i])
+}
+
+
+# LFS BIAS divided into small and big countries
+    for (i in 1:5) {
+    bias.lfs[i]~dnorm(-0.04,100)}
+
+    for (i in 6:9) {
+    bias.lfs[i]~dnorm(-0.13,100)}
+
+    for (i in 10:19) {
+    bias.lfs[i]~dnorm(-0.35,100)}
+
+    for (i in 20:20) {
+    bias.lfs[i]~dnorm(-0.13,100)}
+
+    for (i in 21:25) {
+    bias.lfs[i]~dnorm(-0.04,100)}
+
+    for (i in 26:29) {
+    bias.lfs[i]~dnorm(-0.13,100)}
+
+    for (i in 30:39) {
+    bias.lfs[i]~dnorm(-0.35,100)}
+
+    for (i in 40:40) {
+    bias.lfs[i]~dnorm(-0.13,100)}
+
+    #for (i in 1:10) {
+    #bias.lfs[i]~dnorm(-0.35,100)}
+
+    #for (i in 11:19) {
+    #bias.lfs[i]~dnorm(-0.16,100)}
+
+    #for (i in 20:20) {
+    #bias.lfs[i]~dnorm(-0.35,100)}
+
+    #for (i in 21:30) {
+    #bias.lfs[i]~dnorm(-0.35,100)}
+
+    #for (i in 31:39) {
+    #bias.lfs[i]~dnorm(-0.16,100)}
+
+    #for (i in 40:40) {
+    #bias.lfs[i]~dnorm(-0.22,100)}
+# FB values
+  def.fb~dnorm(0,100) # to relax small variance
+  bias.fb~dnorm(0.04,100)
+
+for (i in 1:20) {
+alg.fb[i]~dnorm((alg[i]),100)}
+
+for (i in 20:20) {
+greece_f[i]~dnorm(-2.76,10)}
+
+for (i in 40:40) {
+greece_f[i]~dnorm(-3.70,10)}
+
+
+for (i in 1:40) {
+cov.fb[i]~dnorm(-rate[i],100)}
+
+
+##### Migration model----------------------------------------------------------------------
+
+    for (i in 1:40) {
+      migmean[i]<-a0+
+        a1*pop[i]+
+        a2*(inflow[i])+
+        a3*(outflow[i])+
+        a4*gdp[i]+
+        a5*unemp_17[i]
+      true.stock[i]~dlnorm(migmean[i],tau.mig)
+    }
+
+##### Prior distributions -----------------------------------------------------------
+# Precision terms Changed to dgamma(100,1)
+# Gamma (100, 1) has mean 100, and variance 100
+  tau.lfs~dgamma(100,1)
+  tau.fb~dgamma(100,1)
+  tau.mig~dgamma(100,1)
+
+# Regression model priors
+  a0~dnorm(0,0.01)
+  a1~dnorm(0,1)
+  a2~dnorm(0,1)
+  a3~dnorm(0,1)
+  a4~dnorm(0,1)
+  a5~dnorm(0,1)
+
+##### Undercount---------------------------------------------------------------------------
+#undercount<-(sum(true.stock[])-sum(lfs[]))/sum(lfs[])
+
+
+undercount18<-(sum(true.stock[1:20])-sum(lfs[1:20]))/sum(lfs[1:20])
+undercount19<-(sum(true.stock[21:40])-sum(lfs[21:40]))/sum(lfs[21:40])
+
+}
