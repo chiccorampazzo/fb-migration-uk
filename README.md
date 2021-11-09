@@ -6,12 +6,11 @@ This repository contains code and data for our paper on combining Facebook Adver
 
 Please, cite this work as: 
 
-Rampazzo, F., Bijak, J., Vitali, A., Weber, I., and Zagheni, E. (2021). “*A Framework for Estimating Migrant Stocks Using Digital Traces and Survey Data: an Application in the United Kingdom*”. Demography. 
+Francesco Rampazzo, Jakub Bijak, Agnese Vitali, Ingmar Weber, Emilio Zagheni; "*A Framework for Estimating Migrant Stocks Using Digital Traces and Survey Data: An Application in the United Kingdom*". Demography 2021; 9578562. https://doi.org/10.1215/00703370-9578562
 
 Or, if you modify and improve the code or use the data, please cite: 
-https://doi.org/10.1215/00703370-9578562
 
-Zenodo doi
+[![DOI](https://zenodo.org/badge/397285635.svg)](https://zenodo.org/badge/latestdoi/397285635)
 
 ## Code
 
