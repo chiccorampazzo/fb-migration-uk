@@ -9,6 +9,7 @@ Please, cite this work as:
 Rampazzo, F., Bijak, J., Vitali, A., Weber, I., and Zagheni, E. (Forthcoming). “*A Framework for Estimating Migrant Stocks Using Digital Traces and Survey Data: an Application in the United Kingdom*”. Demography. 
 
 Or, if you modify and improve the code or use the data, please cite: 
+https://doi.org/10.1215/00703370-9578562
 
 Zenodo doi
 
